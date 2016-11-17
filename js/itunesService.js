@@ -8,7 +8,31 @@ angular.module('itunes').service('itunesService', function($http, $q){
   //You can return the http request or you can make your own promise in order to manipulate the data before you resolve it.
 
     //Code here
-    
+    this.searchByArtist = function(artist) {
+        var deferred = $q.defer();
+          
+        var url = 'https://itunes.apple.com/search?term=' + artist + '&callback=JSON_CALLBACK';  
+        $http.jsonp(url).
+        success(function(response) {
+            
+            songData = [];
+            var results = response.results;
+            for(var i =0; i < results.length; i++) {
+              songData.push({
+                AlbumArt:         results[i]['artworkUrl100'],
+                Artist:           results[i]['artistName'],
+                SongTitle:        results[i]['trackName'],
+                Collection:       results[i]['collectionCensoredName'],
+                CollectionPrice:  results[i]['collectionPrice'],
+                Play:             results[i]['previewUrl'],
+                Type:             results[i]['kind']
+              })
+            }
+            deferred.resolve(songData);
+        })
+
+        return deferred.promise; 
+    }    
 
 
 
@@ -24,7 +48,9 @@ angular.module('itunes').service('itunesService', function($http, $q){
       Play: "http://a423.phobos.apple.com/us/r1000/013/Music4/v4/4a/ab/7c/4aab7ce2-9a72-aa07-ac6b-2011b86b0042/mzaf_6553745548541009508.plus.aac.p.m4a"
       Type: "song"
   */
-  //the iTunes API is going to give you a lot more details than ng-grid wants. Create a new array and then loop through the iTunes data pushing into your new array objects that look like the above data. Make sure your method returns this finalized array of data. 
+  //the iTunes API is going to give you a lot more details than ng-grid wants. 
+  //Create a new array and then loop through the iTunes data pushing into your new 
+  // array objects that look like the above data. Make sure your method returns this finalized array of data. 
   // When this is complete, head back to your controller.
 
 
