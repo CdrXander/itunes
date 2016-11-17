@@ -3,8 +3,8 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
   //This means when you make your iTunes request, you'll need to get back the information, parse it accordingly, then set it to songData on the scope -> $scope.songData = ...
   
 
-  $scope.musicFilter = {
-    trackName:''
+  $scope.filterOptions = {
+    filterText:''
   };
 
   $scope.gridOptions = { 
@@ -15,12 +15,12 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
         {field: 'Play', displayName: 'Play', width: '40px', cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><a href="{{row.getProperty(col.field)}}"><img src="http://www.icty.org/x/image/Miscellaneous/play_icon30x30.png"></a></div>'},
         {field: 'SongTitle', displayName: 'Song'},
         {field: 'Artist', displayName: 'Artist'},
-        {field: 'Collection', displayName: 'Collection'},
+        {field: 'Collection', displayName: 'Album'},
         {field: 'AlbumArt', displayName: 'Album Art', width: '110px', cellTemplate: '<div class="ngCellText" ng-class="col.colIndex()"><img ng-src="{{row.getProperty(col.field)}}"></div>'},
         {field: 'Type', displayName: 'Type'},
-        {field: 'CollectionPrice', displayName: 'Collection Price'},
+        {field: 'CollectionPrice', displayName: 'Album Price'},
       ],
-      filterOptions:$scope.musicFilter
+      filterOptions: $scope.filterOptions
   };
 
   //Our controller is what's going to connect our 'heavy lifting' itunesService with our view 
@@ -38,12 +38,20 @@ angular.module('itunes').controller('mainCtrl', function($scope, itunesService){
     
     //Code here
   $scope.getSongData = function() {
+      $scope.filterOptions.filterText = '';
       itunesService.searchByArtist($scope.artist).then(function(serviceData) {
           $scope.songData = serviceData;
           console.log($scope.songData);
       });
   }
   
+
+  $scope.updateFilter = function(col, text) {
+      $scope.filterOptions.filterText = '';
+      if(col) {
+        $scope.filterOptions.filterText =  $scope.filterColumn + ': ' +  $scope.filterOptions.filterText;
+      }
+  }
 
 
 
